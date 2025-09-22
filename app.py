@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import base64
 import io
 
-# Load the CNN model
 @st.cache_resource
 def load_cnn_model():
     return load_model("fruit_meat_vegetable_cnn_model.h5")
@@ -16,10 +15,8 @@ def load_cnn_model():
 model = load_cnn_model()
 class_names = ['Fruit_479', 'Meat_500', 'Vegetable_374']
 
-# Streamlit page configuration
-st.set_page_config(page_title="CNN Image Classifier", layout="wide")
+#st.set_page_config(page_title="CNN Image Classifier", layout="wide")
 
-# Enhanced background animation
 st.markdown("""
     <style>
     .stApp {
@@ -55,12 +52,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Rest of your app code (webcam, file uploader, etc.) remains unchanged
 st.title("Image Classifier -- ft.Groceries")
 st.write("Upload an image or use your webcam to classify it into Fruit, Meat, or Vegetable.")
-# ... (your existing webcam and file uploader code) ...
 
-# Sidebar content
 st.sidebar.header("About")
 st.sidebar.write("""
 This app uses a Convolutional Neural Network (CNN) trained to classify images into:
@@ -71,7 +65,6 @@ This app uses a Convolutional Neural Network (CNN) trained to classify images in
 CNN is better fit for image classification than RNN
 """)
 
-# Webcam capture component (only activated when chosen)
 st.subheader("Capture Image from Webcam")
 use_webcam = st.checkbox("Enable Webcam", key="webcam_toggle")
 
@@ -112,40 +105,34 @@ if use_webcam:
     """
     webcam_image = st.components.v1.html(webcam_html, height=600)
 
-# File uploader
 uploaded_file = st.file_uploader("Or choose an image...", type=["jpg", "jpeg", "png"])
 
-# Process image (from webcam or file upload)
 img = None
 if use_webcam and 'value' in st.session_state.get('_components', {}) and webcam_image:
-    # Handle webcam image
+    
     data_url = st.session_state['_components']['value']
     if data_url.startswith('data:image'):
-        # Decode base64 image from webcam
+        
         img_data = base64.b64decode(data_url.split(',')[1])
         img = Image.open(io.BytesIO(img_data))
 elif uploaded_file is not None:
-    # Handle uploaded image
+   
     img = Image.open(uploaded_file)
 
-# Process and classify image if available
 if img is not None:
-    st.image(img, caption="Selected Image", use_column_width=True)
+    st.image(img, caption="Selected Image")
 
-    # Preprocess image
     img_resized = img.resize((128, 128))
     img_array = image.img_to_array(img_resized)
     img_array = img_array / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
-    # Make prediction
     preds = model.predict(img_array)
     class_index = np.argmax(preds[0])
     predicted_class = class_names[class_index]
 
     st.success(f"Predicted Class: **{predicted_class}**")
 
-    # Display prediction probabilities
     st.subheader("Prediction Probabilities")
     prob_dict = {class_names[i]: float(preds[0][i]) for i in range(len(class_names))}
 
