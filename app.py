@@ -144,17 +144,5 @@ if img is not None:
     for i, v in enumerate(prob_dict.values()):
         ax.text(i, v + 0.02, f"{v*100:.1f}%", ha='center', fontweight='bold')
     st.pyplot(fig)
-import pandas as pd
-import os
-from datetime import datetime
-log_path = "uploads/log.csv"
-new_entry = {"filename": "image", "prediction": predicted_class, "time": datetime.now()}
-df = pd.DataFrame([new_entry])
-
-if os.path.exists(log_path):
-    old_df = pd.read_csv(log_path)
-    df = pd.concat([old_df, df], ignore_index=True)
-
-df.to_csv(log_path, index=False)
 st.markdown("---")
 st.write("Built with TensorFlow CNN & Streamlit by Rishitha")
